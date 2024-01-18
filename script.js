@@ -1,8 +1,8 @@
-let proizvodjaciroute = "https://localhost:44369/api/proizvodjaci";
-let telefoniroute = "https://localhost:44369/api/telefoni";
-let loginroute = "https://localhost:44369/api/Auth/login";
-let registerroute = "https://localhost:44369/api/Auth/register";
-let searchroute = "https://localhost:44369/api/pretraga";
+let proizvodjaciroute = "https://localhost:44377/api/proizvodjaci";
+let telefoniroute = "https://localhost:44377/api/telefoni";
+let loginroute = "https://localhost:44377/api/Auth/login";
+let registerroute = "https://localhost:44377/api/Auth/register";
+let searchroute = "https://localhost:44377/api/pretraga";
 let jwt = undefined;
 function Auth() {
   return `Bearer ${jwt}`;
@@ -15,7 +15,8 @@ function Logout() {
   document.getElementById("postform").style.display = "none";
   document.getElementById("searchform").style.display = "none";
   document.getElementById("loginfo").style.display = "none";
-  document.getElementById("userinfo").innerText = "Korisnik nije prijavljen na sistem";
+  document.getElementById("userinfo").innerText =
+    "Korisnik nije prijavljen na sistem";
   BackToStart();
   GetTelefoni();
 }
@@ -82,11 +83,7 @@ function Register() {
         ShowLoginForm();
       } else {
         res.json().then((err) => {
-          alert(`Neuspela registracija! 
-          ${err.errors.Email}
-          ${err.errors.Password}
-          ${err.errors.Username}
-          `);
+          alert("Greska prilikom registracije!");
         });
       }
     })
@@ -139,11 +136,11 @@ function AddTelefon() {
   let cena = document.getElementById("cena").value;
   let proizvodjacid = document.getElementById("proizvodjacid").value;
   let telefon = {
-    model:model,
-    operativniSistem:os,
-    dostupnaVelicina:kolicina,
-    cena:cena,
-    proizvodjacid,proizvodjacid
+    model: model,
+    operatingSystem: os,
+    size: kolicina,
+    price: cena,
+    manufacturerId:proizvodjacid
   };
   if (validateTelefon(telefon)) {
     let options = {
@@ -167,42 +164,30 @@ function AddTelefon() {
   }
 }
 function validateTelefon(x) {
-  if(!x.model)
-  {
-    alert("Model telefona mora biti unet!")
+  if (!x.model) {
+    alert("Model telefona mora biti unet!");
     return false;
-  }
-  else if(x.model.length < 3 || x.model.length > 120)
-  {
+  } else if (x.model.length < 3 || x.model.length > 120) {
     alert("Model telefona mora imati izmedju 3 i 120 karaktera!");
     return false;
   }
-  if(!x.operativniSistem)
-  {
-    alert("Operativni sistem telefona mora biti unet!")
+  if (!x.operatingSystem) {
+    alert("Operativni sistem telefona mora biti unet!");
     return false;
+  } else if (x.operatingSystem.length < 2 || x.operatingSystem.length > 30) {
+    alert("Operativni sistem mora imati izmedju 2 i 30 karaktera!");
   }
-  else if(x.operativniSistem.length < 2 || x.operativniSistem.length > 30 )
-  {
-    alert("Operativni sistem mora imati izmedju 2 i 30 karaktera!")
-  }
-  if(!x.dostupnaVelicina)
-  {
-    alert("Dostupne velicine moraju biti unete!")
+  if (!x.size) {
+    alert("Dostupne velicine moraju biti unete!");
     return false;
+  } else if (x.size < 0 || x.size > 1000) {
+    alert("Dostupne velicine telefona moraju biti u intervalu od 0 do 1000!");
   }
-  else if(x.dostupnaVelicina < 0 || x.dostupnaVelicina > 1000)
-  {
-    alert("Dostupne velicine telefona moraju biti u intervalu od 0 do 1000!")
-  }
-  if(!x.cena)
-  {
-    alert("Cena telefona mora biti uneta!")
+  if (!x.price) {
+    alert("Cena telefona mora biti uneta!");
     return false;
-  }
-  else if(x.cena < 1 || x.cena > 250000)
-  {
-    alert("Cena telefona mora biti izmedju 1 i 250000")
+  } else if (x.price < 1 || x.price > 250000) {
+    alert("Cena telefona mora biti izmedju 1 i 250000");
     return false;
   }
   return true;
@@ -282,13 +267,13 @@ function ShowTelefoni(telefoni) {
     let tr = document.createElement("tr");
 
     let thProizvodjac = document.createElement("td");
-    thProizvodjac.innerText = x.proizvodjacNaziv;
+    thProizvodjac.innerText = x.manufacturerName;
     let thModel = document.createElement("td");
     thModel.innerText = x.model;
     let thCena = document.createElement("td");
-    thCena.innerText = x.cena
+    thCena.innerText = x.price;
     let thKolicina = document.createElement("td");
-    thKolicina.innerText = x.dostupnaVelicina;
+    thKolicina.innerText = x.size;
 
     tr.appendChild(thProizvodjac);
     tr.appendChild(thModel);
@@ -297,7 +282,7 @@ function ShowTelefoni(telefoni) {
 
     if (jwt) {
       let tdOs = document.createElement("td");
-      tdOs.innerText = x.operativniSistem
+      tdOs.innerText = x.operatingSystem;
       let tdAkcija = document.createElement("td");
       tdAkcija.classList.add("text-center");
       let deletebutton = document.createElement("button");
@@ -330,7 +315,7 @@ function ShowProizvodjaci(proizvodjaci) {
   let select = document.getElementById("proizvodjacid");
   for (const x of proizvodjaci) {
     let option = document.createElement("option");
-    option.innerText = x.naziv;
+    option.innerText = x.name;
     option.value = x.id;
     select.appendChild(option);
   }
